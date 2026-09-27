@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CPT 弹药震动调试器</title>
+  <style>
+    :root { color-scheme: dark; font: 15px/1.5 system-ui, sans-serif; }
+    body { max-width: 960px; margin: 30px auto; padding: 0 18px; background: #11151b; color: #edf2f7; }
+    h1 { margin-bottom: 4px; }
+    .muted { color: #a7b1c0; }
+    .panel { margin: 18px 0; padding: 18px; border: 1px solid #303a47; border-radius: 12px; background: #191f28; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .row { display: grid; grid-template-columns: 165px 1fr 110px; gap: 12px; align-items: center; margin: 13px 0; }
+    input[type=range] { width: 100%; accent-color: #79b8ff; }
+    input[type=text], input[type=number], select { padding: 9px; border: 1px solid #3b4654; border-radius: 7px; background: #10151c; color: #edf2f7; }
+    button { padding: 9px 14px; border: 0; border-radius: 7px; background: #3478c8; color: white; cursor: pointer; }
+    button.secondary { background: #3b4654; }
+    button.danger { background: #873c45; }
+    canvas { width: 100%; height: 230px; display: block; background: #10151c; border-radius: 8px; }
+    pre { padding: 12px; overflow-x: auto; background: #10151c; border-radius: 8px; }
+    #status { min-height: 1.5em; }
+    @media (max-width: 650px) { .row { grid-template-columns: 125px 1fr 80px; } }
+  </style>
+</head>
+<body>
+  <h1>CPT 弹药类型震动调试器</h1>
+  <p class="muted">左右扳机马达与普通双马达均可逐弹药设置。弹丸实际伤害会自动按“伤害参考值”缩放震动强度；游戏里打开 CPT 弹药轮盘会把当前枪支持的弹药 ID 更新到配置。</p>
+  <section class="panel">
+    <div class="toolbar">
+      <label for="profile">弹药 ID：</label><select id="profile"></select>
+      <input id="ammoId" type="text" placeholder="namespace:path" aria-label="弹药 ID">
+      <button id="add">添加弹药配置</button>
+      <button id="remove" class="danger">删除独立配置</button>
+    </div>
+    <p class="muted">导入游戏生成的 JSON 可刷新弹药 ID 列表；未单独配置的弹药使用默认参数。弹药 ID 来自 CPT 可用弹丸注册表。</p>
+    <div class="row"><label for="strong">普通马达：强</label><input id="strong" type="range" min="0" max="1" step="0.01"><output id="strongValue"></output></div>
+    <div class="row"><label for="weak">普通马达：弱</label><input id="weak" type="range" min="0" max="1" step="0.01"><output id="weakValue"></output></div>
+    <div class="row"><label for="duration">普通马达时长</label><input id="duration" type="range" min="1" max="40" step="1"><output id="durationValue"></output></div>
+    <div class="row"><label for="triggerLeft">左扳机马达</label><input id="triggerLeft" type="range" min="0" max="1" step="0.01"><output id="triggerLeftValue"></output></div>
+    <div class="row"><label for="triggerRight">右扳机马达</label><input id="triggerRight" type="range" min="0" max="1" step="0.01"><output id="triggerRightValue"></output></div>
+    <div class="row"><label for="triggerDuration">扳机震动时长</label><input id="triggerDuration" type="range" min="1" max="40" step="1"><output id="triggerDurationValue"></output></div>
+    <div class="row"><label for="damageReference">伤害参考值</label><input id="damageReference" type="range" min="0.5" max="20" step="0.1"><output id="damageReferenceValue"></output></div>
+    <div class="row"><label for="previewDamage">伤害预览值</label><input id="previewDamage" type="number" min="0" max="100" step="0.1" value="5"><output id="damageScale"></output></div>
+    <div class="toolbar">
+      <button id="test">试听普通马达</button>
+      <button id="import" class="secondary">导入游戏 JSON</button><input id="file" type="file" accept="application/json,.json" hidden>
+      <button id="export" class="secondary">导出配置 JSON</button>
+      <button id="reset" class="secondary">重置所有参数</button>
+    </div>
+    <p class="muted">多数浏览器只能试听普通双马达，不能直接驱动自适应扳机马达；扳机参数会显示在图表与导出配置中。</p>
+    <p id="status" class="muted" role="status"></p>
+  </section>
+  <section class="panel">
+    <h2>当前伤害下的震动包络</h2>
+    <canvas id="graph" width="900" height="230" aria-label="马达震动包络图"></canvas>
+    <p class="muted">1 tick = 50 ms。缩放系数 = clamp(伤害 ÷ 伤害参考值, 0.25, 2.0)；伤害越高，四路马达强度越大。</p>
+  </section>
+  <section class="panel">
+    <h2>当前弹药配置片段</h2>
+    <pre id="snippet"></pre>
+  </section>
+<script>
+(() => {
+  const fallback = { strong: 0.35, weak: 0.25, durationTicks: 3, triggerLeft: 0.16, triggerRight: 0.22, triggerDurationTicks: 3, damageReference: 5 };
+  const fields = ["strong", "weak", "duration", "triggerLeft", "triggerRight", "triggerDuration", "damageReference"];
+  const inputs = Object.fromEntries(fields.map(id => [id, document.getElementById(id)]));
+  const select = document.getElementById("profile"), status = document.getElementById("status");
+  const canvas = document.getElementById("graph"), ctx = canvas.getContext("2d");
+  let root = { default: { ...fallback }, ammo: {}, knownAmmo: [] }, active = "default";
+  try {
+    const saved = JSON.parse(localStorage.getItem("cpt-rumble-tuner-v3") || "null");
+    if (saved?.default && saved?.ammo) root = { knownAmmo: [], ...saved };
+  } catch (_) {}
+
+  function current() {
+    if (active === "default") return root.default;
+    if (!root.ammo[active]) root.ammo[active] = { ...root.default };
+    return root.ammo[active];
+  }
+  function ids() { return [...new Set([...(root.knownAmmo || []), ...Object.keys(root.ammo)])].sort(); }
+  function rebuildSelect() {
+    select.replaceChildren(new Option("默认参数", "default"));
+    for (const id of ids()) select.add(new Option(id, id));
+    select.value = active;
+  }
+  function scaleFor(p) {
+    const damage = Math.max(0, Number(document.getElementById("previewDamage").value) || 0);
+    return Math.max(0.25, Math.min(2, damage / Number(p.damageReference || fallback.damageReference)));
+  }
+  function draw() {
+    rebuildSelect();
+    const p = current(), factor = scaleFor(p);
+    inputs.strong.value = p.strong; inputs.weak.value = p.weak;
+    inputs.duration.value = p.durationTicks;
+    inputs.triggerLeft.value = p.triggerLeft; inputs.triggerRight.value = p.triggerRight;
+    inputs.triggerDuration.value = p.triggerDurationTicks; inputs.damageReference.value = p.damageReference;
+    document.getElementById("strongValue").value = `${Number(p.strong).toFixed(2)} → ${(p.strong * factor).toFixed(2)}`;
+    document.getElementById("weakValue").value = `${Number(p.weak).toFixed(2)} → ${(p.weak * factor).toFixed(2)}`;
+    document.getElementById("durationValue").value = `${p.durationTicks} ticks / ${p.durationTicks * 50} ms`;
+    document.getElementById("triggerLeftValue").value = `${Number(p.triggerLeft).toFixed(2)} → ${(p.triggerLeft * factor).toFixed(2)}`;
+    document.getElementById("triggerRightValue").value = `${Number(p.triggerRight).toFixed(2)} → ${(p.triggerRight * factor).toFixed(2)}`;
+    document.getElementById("triggerDurationValue").value = `${p.triggerDurationTicks} ticks / ${p.triggerDurationTicks * 50} ms`;
+    document.getElementById("damageReferenceValue").value = Number(p.damageReference).toFixed(1);
+    document.getElementById("damageScale").value = `×${factor.toFixed(2)}`;
+    const profile = { ...p };
+    document.getElementById("snippet").textContent = JSON.stringify(active === "default" ? { default: profile } : { [active]: profile }, null, 2);
+    localStorage.setItem("cpt-rumble-tuner-v3", JSON.stringify(root));
+
+    const w = canvas.width, h = canvas.height, pad = 38;
+    ctx.clearRect(0, 0, w, h); ctx.strokeStyle = "#303a47"; ctx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) { const y = pad + (h - pad * 2) * i / 4; ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(w - pad, y); ctx.stroke(); }
+    ctx.fillStyle = "#a7b1c0"; ctx.font = "12px system-ui"; ctx.fillText("1.0", 8, pad + 4); ctx.fillText("0", 22, h - pad + 4);
+    ctx.fillText("0 ms", pad, h - 10); ctx.fillText(`${Math.max(p.durationTicks, p.triggerDurationTicks) * 50} ms`, w - pad - 70, h - 10);
+    const endX = w - pad, maxTicks = Math.max(p.durationTicks, p.triggerDurationTicks);
+    const yFor = value => h - pad - Math.min(1, value * factor) * (h - pad * 2);
+    const curves = [[p.strong, p.durationTicks, "#ff6b6b"], [p.weak, p.durationTicks, "#71b7ff"], [p.triggerLeft, p.triggerDurationTicks, "#ffd166"], [p.triggerRight, p.triggerDurationTicks, "#c792ea"]];
+    for (const [value, ticks, color] of curves) {
+      ctx.strokeStyle = color; ctx.lineWidth = 3;
+      const x2 = pad + (endX - pad) * ticks / maxTicks;
+      ctx.beginPath(); ctx.moveTo(pad, yFor(value)); ctx.lineTo(x2, yFor(value)); ctx.stroke();
+    }
+  }
+
+  select.addEventListener("change", () => { active = select.value; draw(); });
+  const mapping = { duration: "durationTicks", triggerDuration: "triggerDurationTicks" };
+  for (const id of fields) inputs[id].addEventListener("input", () => {
+    const key = mapping[id] || id, value = Number(inputs[id].value);
+    if (id === "previewDamage") return;
+    current()[key] = value; draw();
+  });
+  document.getElementById("previewDamage").addEventListener("input", draw);
+  document.getElementById("add").addEventListener("click", () => {
+    const id = document.getElementById("ammoId").value.trim();
+    if (!/^[a-z0-9_.-]+:[a-z0-9_./-]+$/.test(id)) { status.textContent = "请输入有效的 namespace:path 弹药 ID。"; return; }
+    if (!root.knownAmmo.includes(id)) root.knownAmmo.push(id);
+    if (!root.ammo[id]) root.ammo[id] = { ...root.default };
+    active = id; document.getElementById("ammoId").value = ""; status.textContent = `已创建 ${id} 的独立配置。`; draw();
+  });
+  document.getElementById("remove").addEventListener("click", () => {
+    if (active === "default") { status.textContent = "默认参数不能删除。"; return; }
+    delete root.ammo[active]; active = "default"; status.textContent = "已删除独立配置；该弹药仍保留在已发现 ID 列表中并回退到默认值。"; draw();
+  });
+  document.getElementById("import").addEventListener("click", () => document.getElementById("file").click());
+  document.getElementById("file").addEventListener("change", async event => {
+    const file = event.target.files?.[0]; if (!file) return;
+    try {
+      const parsed = JSON.parse(await file.text());
+      if (!parsed.default || !parsed.ammo || typeof parsed.ammo !== "object") throw new Error("配置缺少 default 或 ammo 字段");
+      root = { knownAmmo: [], ...parsed }; active = "default"; status.textContent = `配置已导入；已发现 ${root.knownAmmo.length} 个弹药 ID。`; draw();
+    } catch (error) { status.textContent = `导入失败：${error.message}`; }
+    event.target.value = "";
+  });
+  document.getElementById("export").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(root, null, 2)], { type: "application/json" }), url = URL.createObjectURL(blob);
+    const link = document.createElement("a"); link.href = url; link.download = "cpt-rumble.json"; link.click(); URL.revokeObjectURL(url);
+    status.textContent = "已导出；复制到实例 config/controlify/cpt-rumble.json。";
+  });
+  document.getElementById("reset").addEventListener("click", () => { root = { default: { ...fallback }, ammo: {}, knownAmmo: [] }; active = "default"; status.textContent = "参数已重置。"; draw(); });
+  document.getElementById("test").addEventListener("click", async () => {
+    const pads = navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [], pad = pads.find(gamepad => gamepad.vibrationActuator?.playEffect);
+    if (!pad) { status.textContent = "未找到支持震动的 Gamepad；请连接手柄并使用支持 Gamepad Haptics 的浏览器。"; return; }
+    const p = current(), factor = scaleFor(p);
+    try {
+      await pad.vibrationActuator.playEffect("dual-rumble", { startDelay: 0, duration: p.durationTicks * 50, strongMagnitude: Math.min(1, p.strong * factor), weakMagnitude: Math.min(1, p.weak * factor) });
+      status.textContent = `已向 ${pad.id} 试听普通双马达；扳机马达由配置导入游戏后生效。`;
+    } catch (error) { status.textContent = `浏览器拒绝震动请求：${error.message || error}`; }
+  });
+  draw();
+})();
+</script>
+</body>
+</html>

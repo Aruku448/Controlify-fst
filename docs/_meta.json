@@ -1,0 +1,14 @@
+{
+  "resource-packs": {
+    "name": "Resource Packs",
+    "icon": null
+  },
+  "reference": {
+    "name": "Reference",
+    "icon": null
+  },
+  "architecture": {
+    "name": "Architecture",
+    "icon": null
+  }
+}

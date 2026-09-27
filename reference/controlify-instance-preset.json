@@ -1,0 +1,47 @@
+{
+  "_comment": "RiaFst 实例中已验证的 Controlify 手柄配置快照（仅供参考/对照），不含手柄 GUID。",
+  "controlify:input": {
+    "h_look_sensitivity": 1.0,
+    "v_look_sensitivity": 1.0,
+    "v_look_invert": false,
+    "virtual_mouse_sensitivity": 1.0,
+    "reduce_aiming_sensitivity": true,
+    "aim_assist_enabled": true,
+    "aim_assist_strength": 0.6,
+    "aim_assist_fov": 30.0,
+    "aim_assist_range": 64.0,
+    "button_activation_threshold": 0.5,
+    "is_l_c_e": false,
+    "deadzones": {
+      "controlify:right_stick": 0.08,
+      "controlify:left_stick": 0.08
+    },
+    "deadzones_calibrated": true,
+    "delayed_calibration": true,
+    "mixed_input": true,
+    "keep_default_bindings": false,
+    "radial_actions": [
+      "controlify:toggle_hud_visibility",
+      "controlify:change_perspective",
+      "controlify:drop_stack",
+      "controlify:open_chat",
+      "controlify:swap_hands",
+      "controlify:pick_block",
+      "controlify:take_screenshot",
+      "controlify:show_player_list"
+    ],
+    "radial_button_focus_timeout_ticks": 20,
+    "mapping": null,
+    "bindings": {
+      "fabric-key-binding-api-v1:key.createpneumatictacticals.reload": {
+        "button": "controlify:button/west"
+      },
+      "fabric-key-binding-api-v1:key.createpneumatictacticals.fire_mode": {
+        "button": "controlify:button/dpad_right"
+      },
+      "fabric-key-binding-api-v1:key.createpneumatictacticals.cycle_ammo": {
+        "button": "controlify:button/dpad_up"
+      }
+    }
+  }
+}

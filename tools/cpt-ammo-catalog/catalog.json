@@ -1,0 +1,772 @@
+{
+  "instance": "RiaFst",
+  "minecraft": "1.20.1",
+  "forge": "47.4.0",
+  "cpt": "createpneumatictacticals-0.1.1",
+  "create": "6.0.8",
+  "count": 45,
+  "note": "Snapshot extracted from the RiaFst instance mod datapacks and kubejs/data at capture time. Some ammo IDs map to multiple registered item icons.",
+  "ammo": [
+    {
+      "ammo_id": "create:apple",
+      "items": [
+        "minecraft:apple"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/apple.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:apple",
+          "icon": "icons/minecraft_apple.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:baked_potato",
+      "items": [
+        "minecraft:baked_potato"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/baked_potato.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:baked_potato",
+          "icon": "icons/minecraft_baked_potato.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:beetroot",
+      "items": [
+        "minecraft:beetroot"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/beetroot.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:beetroot",
+          "icon": "icons/minecraft_beetroot.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:blaze_cake",
+      "items": [
+        "create:blaze_cake"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/blaze_cake.json",
+      "registered_icons": [
+        {
+          "item_id": "create:blaze_cake",
+          "icon": "icons/create_blaze_cake.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:cake",
+      "items": [
+        "minecraft:cake"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/cake.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:cake",
+          "icon": "icons/minecraft_cake.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:carrot",
+      "items": [
+        "minecraft:carrot"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/carrot.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:carrot",
+          "icon": "icons/minecraft_carrot.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:chocolate_berry",
+      "items": [
+        "create:chocolate_glazed_berries"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/chocolate_berry.json",
+      "registered_icons": [
+        {
+          "item_id": "create:chocolate_glazed_berries",
+          "icon": "icons/create_chocolate_glazed_berries.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:chorus_fruit",
+      "items": [
+        "minecraft:chorus_fruit"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/chorus_fruit.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:chorus_fruit",
+          "icon": "icons/minecraft_chorus_fruit.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:enchanted_golden_apple",
+      "items": [
+        "minecraft:enchanted_golden_apple"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/enchanted_golden_apple.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:enchanted_golden_apple",
+          "icon": "icons/minecraft_enchanted_golden_apple.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:fish",
+      "items": [
+        "minecraft:cod",
+        "minecraft:cooked_cod",
+        "minecraft:salmon",
+        "minecraft:cooked_salmon",
+        "minecraft:tropical_fish"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/fish.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:cod",
+          "icon": "icons/minecraft_cod.png"
+        },
+        {
+          "item_id": "minecraft:cooked_cod",
+          "icon": "icons/minecraft_cooked_cod.png"
+        },
+        {
+          "item_id": "minecraft:salmon",
+          "icon": "icons/minecraft_salmon.png"
+        },
+        {
+          "item_id": "minecraft:cooked_salmon",
+          "icon": "icons/minecraft_cooked_salmon.png"
+        },
+        {
+          "item_id": "minecraft:tropical_fish",
+          "icon": "icons/minecraft_tropical_fish.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:glistering_melon",
+      "items": [
+        "minecraft:glistering_melon_slice"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/glistering_melon.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:glistering_melon_slice",
+          "icon": "icons/minecraft_glistering_melon_slice.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:glow_berry",
+      "items": [
+        "minecraft:glow_berries"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/glow_berry.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:glow_berries",
+          "icon": "icons/minecraft_glow_berries.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:golden_apple",
+      "items": [
+        "minecraft:golden_apple"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/golden_apple.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:golden_apple",
+          "icon": "icons/minecraft_golden_apple.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:golden_carrot",
+      "items": [
+        "minecraft:golden_carrot"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/golden_carrot.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:golden_carrot",
+          "icon": "icons/minecraft_golden_carrot.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:honeyed_apple",
+      "items": [
+        "create:honeyed_apple"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/honeyed_apple.json",
+      "registered_icons": [
+        {
+          "item_id": "create:honeyed_apple",
+          "icon": "icons/create_honeyed_apple.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:melon_block",
+      "items": [
+        "minecraft:melon"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/melon_block.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:melon",
+          "icon": "icons/minecraft_melon.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:melon_slice",
+      "items": [
+        "minecraft:melon_slice"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/melon_slice.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:melon_slice",
+          "icon": "icons/minecraft_melon_slice.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:poison_potato",
+      "items": [
+        "minecraft:poisonous_potato"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/poison_potato.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:poisonous_potato",
+          "icon": "icons/minecraft_poisonous_potato.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:potato",
+      "items": [
+        "minecraft:potato"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/potato.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:potato",
+          "icon": "icons/minecraft_potato.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:pufferfish",
+      "items": [
+        "minecraft:pufferfish"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/pufferfish.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:pufferfish",
+          "icon": "icons/minecraft_pufferfish.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:pumpkin_block",
+      "items": [
+        "minecraft:pumpkin"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/pumpkin_block.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:pumpkin",
+          "icon": "icons/minecraft_pumpkin.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:pumpkin_pie",
+      "items": [
+        "minecraft:pumpkin_pie"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/pumpkin_pie.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:pumpkin_pie",
+          "icon": "icons/minecraft_pumpkin_pie.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:suspicious_stew",
+      "items": [
+        "minecraft:suspicious_stew"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/suspicious_stew.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:suspicious_stew",
+          "icon": "icons/minecraft_suspicious_stew.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "create:sweet_berry",
+      "items": [
+        "minecraft:sweet_berries"
+      ],
+      "source": "create-1.20.1-6.0.8.jar!/data/create/create/potato_projectile/type/sweet_berry.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:sweet_berries",
+          "icon": "icons/minecraft_sweet_berries.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "createaddition:chocolate_cake",
+      "items": [
+        "createaddition:chocolate_cake"
+      ],
+      "source": "createaddition-1.20.1-1.3.3.jar!/data/createaddition/create/potato_projectile/type/chocolate_cake.json",
+      "registered_icons": [
+        {
+          "item_id": "createaddition:chocolate_cake",
+          "icon": "icons/createaddition_chocolate_cake.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "createaddition:honey_cake",
+      "items": [
+        "createaddition:honey_cake"
+      ],
+      "source": "createaddition-1.20.1-1.3.3.jar!/data/createaddition/create/potato_projectile/type/honey_cake.json",
+      "registered_icons": [
+        {
+          "item_id": "createaddition:honey_cake",
+          "icon": "icons/createaddition_honey_cake.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:biomass_pellet",
+      "items": [
+        "createaddition:biomass_pellet"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/biomass_pellet.json",
+      "registered_icons": [
+        {
+          "item_id": "createaddition:biomass_pellet",
+          "icon": "icons/createaddition_biomass_pellet.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:bomb_cod_burger",
+      "items": [
+        "tothesky:bomb_cod_burger"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/bomb_cod_burger.json",
+      "registered_icons": [
+        {
+          "item_id": "tothesky:bomb_cod_burger",
+          "icon": "icons/tothesky_bomb_cod_burger.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:candy",
+      "items": [
+        "supplementaries:candy"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/candy.json",
+      "registered_icons": [
+        {
+          "item_id": "supplementaries:candy",
+          "icon": "icons/supplementaries_candy.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:caramelized_marshmellow_on_a_stick",
+      "items": [
+        "create_confectionery:caramelized_marshmellow_on_a_stick"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/caramelized_marshmellow_on_a_stick.json",
+      "registered_icons": [
+        {
+          "item_id": "create_confectionery:caramelized_marshmellow_on_a_stick",
+          "icon": "icons/create_confectionery_caramelized_marshmellow_on_a_stick.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:cooked_glow_squid_tentacles",
+      "items": [
+        "crabbersdelight:cooked_glow_squid_tentacles"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/cooked_glow_squid_tentacles.json",
+      "registered_icons": [
+        {
+          "item_id": "crabbersdelight:cooked_glow_squid_tentacles",
+          "icon": "icons/crabbersdelight_cooked_glow_squid_tentacles.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:corn_cob",
+      "items": [
+        "culturaldelights:corn_cob"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/corn_cob.json",
+      "registered_icons": [
+        {
+          "item_id": "culturaldelights:corn_cob",
+          "icon": "icons/culturaldelights_corn_cob.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:enchanted_golden_moss_clump",
+      "items": [
+        "immersive_weathering:enchanted_golden_moss_clump"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/enchanted_golden_moss_clump.json",
+      "registered_icons": [
+        {
+          "item_id": "immersive_weathering:enchanted_golden_moss_clump",
+          "icon": "icons/immersive_weathering_enchanted_golden_moss_clump.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:golden_moss_clump",
+      "items": [
+        "immersive_weathering:golden_moss_clump"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/golden_moss_clump.json",
+      "registered_icons": [
+        {
+          "item_id": "immersive_weathering:golden_moss_clump",
+          "icon": "icons/immersive_weathering_golden_moss_clump.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:incomplete_wine_bottle",
+      "items": [
+        "tothesky:incomplete_wine_bottle"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/incomplete_wine_bottle.json",
+      "registered_icons": [
+        {
+          "item_id": "tothesky:incomplete_wine_bottle",
+          "icon": "icons/tothesky_incomplete_wine_bottle.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:long_gamblers_tea",
+      "items": [
+        "farmersrespite:long_gamblers_tea"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/long_gamblers_tea.json",
+      "registered_icons": [
+        {
+          "item_id": "farmersrespite:long_gamblers_tea",
+          "icon": "icons/farmersrespite_long_gamblers_tea.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:marshmallow",
+      "items": [
+        "create_confectionery:marshmallow"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/marshmallow.json",
+      "registered_icons": [
+        {
+          "item_id": "create_confectionery:marshmallow",
+          "icon": "icons/create_confectionery_marshmallow.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:nether_wart",
+      "items": [
+        "minecraft:nether_wart"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/nether_wart.json",
+      "registered_icons": [
+        {
+          "item_id": "minecraft:nether_wart",
+          "icon": "icons/minecraft_nether_wart.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:pearl",
+      "items": [
+        "crabbersdelight:pearl"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/pearl.json",
+      "registered_icons": [
+        {
+          "item_id": "crabbersdelight:pearl",
+          "icon": "icons/crabbersdelight_pearl.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:pickle",
+      "items": [
+        "culturaldelights:pickle"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/pickle.json",
+      "registered_icons": [
+        {
+          "item_id": "culturaldelights:pickle",
+          "icon": "icons/culturaldelights_pickle.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:propelpearl",
+      "items": [
+        "nethersdelight:propelpearl"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/propelpearl.json",
+      "registered_icons": [
+        {
+          "item_id": "nethersdelight:propelpearl",
+          "icon": "icons/nethersdelight_propelpearl.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:singularity",
+      "items": [
+        "ae2:singularity"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/singularity.json",
+      "registered_icons": [
+        {
+          "item_id": "ae2:singularity",
+          "icon": "icons/ae2_singularity.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:stuffed_pumpkin",
+      "items": [
+        "farmersdelight:stuffed_pumpkin"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/stuffed_pumpkin.json",
+      "registered_icons": [
+        {
+          "item_id": "farmersdelight:stuffed_pumpkin",
+          "icon": "icons/farmersdelight_stuffed_pumpkin.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "more_bullets:tortilla_chi",
+      "items": [
+        "culturaldelights:tortilla_chips"
+      ],
+      "source": "kubejs/data/more_bullets/potato_cannon_projectile_types/tortilla_chi.json",
+      "registered_icons": [
+        {
+          "item_id": "culturaldelights:tortilla_chips",
+          "icon": "icons/culturaldelights_tortilla_chips.png"
+        }
+      ]
+    },
+    {
+      "ammo_id": "railways:paint_pitcher",
+      "items": [
+        "railways:brown_paint_pitcher",
+        "railways:maroon_paint_pitcher",
+        "railways:red_paint_pitcher",
+        "railways:vermilion_paint_pitcher",
+        "railways:orange_paint_pitcher",
+        "railways:granite_paint_pitcher",
+        "railways:dripstone_paint_pitcher",
+        "railways:ochrum_paint_pitcher",
+        "railways:yellow_paint_pitcher",
+        "railways:chartreuse_paint_pitcher",
+        "railways:olive_green_paint_pitcher",
+        "railways:lime_paint_pitcher",
+        "railways:green_paint_pitcher",
+        "railways:pine_green_paint_pitcher",
+        "railways:cyan_paint_pitcher",
+        "railways:sea_green_paint_pitcher",
+        "railways:turquoise_paint_pitcher",
+        "railways:light_blue_paint_pitcher",
+        "railways:blue_paint_pitcher",
+        "railways:royal_blue_paint_pitcher",
+        "railways:purple_paint_pitcher",
+        "railways:magenta_paint_pitcher",
+        "railways:pink_paint_pitcher",
+        "railways:white_paint_pitcher",
+        "railways:diorite_paint_pitcher",
+        "railways:limestone_paint_pitcher",
+        "railways:light_gray_paint_pitcher",
+        "railways:tuff_paint_pitcher",
+        "railways:gray_paint_pitcher",
+        "railways:scorchia_paint_pitcher",
+        "railways:black_paint_pitcher",
+        "railways:sandy_paint_pitcher"
+      ],
+      "source": "Steam_Rails-1.7.2+forge-mc1.20.1.jar!/data/railways/create/potato_projectile/type/paint_pitcher.json",
+      "registered_icons": [
+        {
+          "item_id": "railways:brown_paint_pitcher",
+          "icon": "icons/railways_brown_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:maroon_paint_pitcher",
+          "icon": "icons/railways_maroon_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:red_paint_pitcher",
+          "icon": "icons/railways_red_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:vermilion_paint_pitcher",
+          "icon": "icons/railways_vermilion_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:orange_paint_pitcher",
+          "icon": "icons/railways_orange_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:granite_paint_pitcher",
+          "icon": "icons/railways_granite_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:dripstone_paint_pitcher",
+          "icon": "icons/railways_dripstone_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:ochrum_paint_pitcher",
+          "icon": "icons/railways_ochrum_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:yellow_paint_pitcher",
+          "icon": "icons/railways_yellow_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:chartreuse_paint_pitcher",
+          "icon": "icons/railways_chartreuse_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:olive_green_paint_pitcher",
+          "icon": "icons/railways_olive_green_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:lime_paint_pitcher",
+          "icon": "icons/railways_lime_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:green_paint_pitcher",
+          "icon": "icons/railways_green_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:pine_green_paint_pitcher",
+          "icon": "icons/railways_pine_green_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:cyan_paint_pitcher",
+          "icon": "icons/railways_cyan_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:sea_green_paint_pitcher",
+          "icon": "icons/railways_sea_green_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:turquoise_paint_pitcher",
+          "icon": "icons/railways_turquoise_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:light_blue_paint_pitcher",
+          "icon": "icons/railways_light_blue_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:blue_paint_pitcher",
+          "icon": "icons/railways_blue_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:royal_blue_paint_pitcher",
+          "icon": "icons/railways_royal_blue_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:purple_paint_pitcher",
+          "icon": "icons/railways_purple_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:magenta_paint_pitcher",
+          "icon": "icons/railways_magenta_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:pink_paint_pitcher",
+          "icon": "icons/railways_pink_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:white_paint_pitcher",
+          "icon": "icons/railways_white_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:diorite_paint_pitcher",
+          "icon": "icons/railways_diorite_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:limestone_paint_pitcher",
+          "icon": "icons/railways_limestone_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:light_gray_paint_pitcher",
+          "icon": "icons/railways_light_gray_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:tuff_paint_pitcher",
+          "icon": "icons/railways_tuff_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:gray_paint_pitcher",
+          "icon": "icons/railways_gray_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:scorchia_paint_pitcher",
+          "icon": "icons/railways_scorchia_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:black_paint_pitcher",
+          "icon": "icons/railways_black_paint_pitcher.png"
+        },
+        {
+          "item_id": "railways:sandy_paint_pitcher",
+          "icon": "icons/railways_sandy_paint_pitcher.png"
+        }
+      ]
+    }
+  ],
+  "missing_icons": []
+}

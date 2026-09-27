@@ -1,0 +1,93 @@
+package dev.isxander.controlify.mixins.core;
+
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import dev.isxander.controlify.Controlify;
+import dev.isxander.controlify.InputMode;
+import dev.isxander.controlify.api.ControlifyApi;
+import dev.isxander.controlify.utils.MouseMinecraftCallNotifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.MouseHandler;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(MouseHandler.class)
+public class MouseHandlerMixin implements MouseMinecraftCallNotifier {
+    @Shadow @Final private Minecraft minecraft;
+
+    @Unique private boolean controlify$calledFromMinecraftSetScreen = false;
+
+    // method_22686 is lambda for GLFW mouse click hook - do it outside of the `onPress` method due to fake inputs
+    @SuppressWarnings({"MixinAnnotationTarget", "UnresolvedMixinReference", "InvalidInjectorMethodSignature"})
+    @Inject(
+            method = {"method_22686", "/lambda\\$setup\\$\\d+/", "m_168091_"},
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MouseHandler;onPress(JIII)V")
+    )
+    private void onMouseClickInput(long window, int button, int action, int modifiers, CallbackInfo ci) {
+        onMouse(window);
+    }
+
+    // method_22689 is lambda for GLFW mouse move hook - do it outside of the `onMove` method due to fake inputs
+    @SuppressWarnings({"MixinAnnotationTarget", "UnresolvedMixinReference", "InvalidInjectorMethodSignature"})
+    @Inject(
+            method = {"method_22689", "/lambda\\$setup\\$\\d+/", "m_168100_"},
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MouseHandler;onMove(JDD)V")
+    )
+    private void onMouseMoveInput(long window, double x, double y, CallbackInfo ci) {
+        onMouse(window);
+    }
+
+    // method_22687 is lambda for GLFW mouse scroll hook - do it outside of the `onScroll` method due to fake inputs
+    @SuppressWarnings({"MixinAnnotationTarget", "UnresolvedMixinReference", "InvalidInjectorMethodSignature"})
+    @Inject(
+            method = {"method_22687", "/lambda\\$setup\\$\\d+/", "m_168096_"},
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/MouseHandler;onScroll(JDD)V")
+    )
+    private void onMouseScrollInput(long window, double scrollDeltaX, double scrollDeltaY, CallbackInfo ci) {
+        onMouse(window);
+    }
+
+    @Unique
+    private void onMouse(long window) {
+        if (window == minecraft.getWindow().getWindow()) {
+            if (Controlify.instance().currentInputMode() != InputMode.MIXED) {
+                Controlify.instance().setInputMode(InputMode.KEYBOARD_MOUSE);
+            } else {
+                Controlify.instance().showCursorTemporarily();
+            }
+        }
+    }
+
+    /**
+     * Without this, mouse is left in the center of the screen that conflicts with controller focus.
+     */
+    @Inject(
+            method = "releaseMouse",
+            at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/InputConstants;grabOrReleaseMouse(JIDD)V")
+    )
+    private void moveMouseIfNecessary(CallbackInfo ci) {
+        if (!controlify$calledFromMinecraftSetScreen && ControlifyApi.get().currentInputMode().isController()) {
+            Controlify.instance().hideMouse(true, true);
+        }
+    }
+
+    // shift after RETURN to escape the if statement scope
+    @Inject(method = "releaseMouse", at = @At(value = "RETURN"))
+    private void resetCalledFromMinecraftSetScreen(CallbackInfo ci) {
+        controlify$calledFromMinecraftSetScreen = false;
+    }
+
+    @ModifyExpressionValue(method = "grabMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;isWindowActive()Z"))
+    private boolean passWindowActiveCheckIfOOFInputIsOn(boolean isWindowActive) {
+        return isWindowActive || (ControlifyApi.get().currentInputMode().isController() && Controlify.instance().config().globalSettings().outOfFocusInput);
+    }
+
+    @Override
+    public void imFromMinecraftSetScreen() {
+        controlify$calledFromMinecraftSetScreen = true;
+    }
+}

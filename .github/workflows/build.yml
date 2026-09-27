@@ -1,0 +1,70 @@
+name: Gradle CI (new)
+
+on:
+  push:
+    paths-ignore:
+      - 'README.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.editorconfig'
+      - 'changelog.md'
+      - 'docs'
+  pull_request:
+
+jobs:
+  generate-build-matrix:
+    runs-on: ubuntu-latest
+    name: Generate build matrix
+
+    outputs:
+      matrix: ${{ steps.generate-matrix.outputs.matrix }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get potential versions
+        id: generate-matrix
+        run: |
+          MATRIX=$(jq -c '{include: (.builds | to_entries | map(. as $entry | $entry.value.platforms | map({ target: ($entry.key + "-" + .), experimental: ($entry.value.experimental // false) })) | flatten)}' ./versions/builds.json)
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+  build:
+    needs: generate-build-matrix
+    runs-on: ubuntu-latest
+    name: Build with gradle
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-build-matrix.outputs.matrix) }}
+
+    continue-on-error: ${{ matrix.experimental == 'true' }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-read-only: false
+      - name: Build ${{ matrix.target }}
+        run: ./gradlew "Refresh active project" buildAndCollectActive --stacktrace
+        env:
+          CI_SINGLE_BUILD: ${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          path: build/finalJars/*.jar
+          name: ${{ matrix.target }}
+
+#  run:
+#    needs: build
+#    runs-on: ubuntu-latest
+#    name: Run Minecraft
+#
+#    strategy:
+#      matrix:
+#        target: ${{ fromJson(needs.retrieve-targets.outputs.targets) }}
