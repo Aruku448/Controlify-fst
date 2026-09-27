@@ -12,7 +12,7 @@
 
 ## 1. 「手柄设置…」按钮点不开，且首次启动不弹 SDL3 询问界面
 
-**状态：已修复，且已完成运行时实测（见 1.5 / 1.6）。**
+**状态：已修复，且已完成运行时实测（见 1.5 / 1.6）；用户可见症状均已消失。**
 **涉及文件：** `src/main/java/dev/isxander/controlify/mixins/core/MinecraftMixin.java`、
 `src/main/java/dev/isxander/controlify/Controlify.java`
 
@@ -136,8 +136,14 @@ java.util.NoSuchElementException: No value present
 同一会话中手柄随后被识别（`8BitDo Ultimate 3-mode Controller for Xbox`），
 说明初始化链路完整跑通；日志无任何 `Controlify` 相关异常。
 
-> 未覆盖：`finishControlifyInit` 的竞态（缺陷 B）——它只在“初始化未完成时点设置按钮”时出现，
-> 而询问界面是模态的，够不到选项菜单；该条仍依靠不变量（重复调用返回同一个进行中的 future）保证。
+用户确认「选项 → 控制… → 手柄设置…」也能正常打开，即**用户可见症状已全部消失**。
+
+> 但要说清楚：**这一步并不能单独证明缺陷 B 已修**。点按钮时初始化早已完成，
+> 此时 `controllerManager` 已就绪，旧代码（`finishedInit` + `completedFuture(null）`）
+> 在同一个场景下也会正常工作。
+> 缺陷 B 只在乎「初始化未完成时打按钮」那个窗口，而它被模态的询问界面挡住了，
+> 本机无法构造。该条仍仅依靠不变量保证：**重复调用 `finishControlifyInit()` 返回
+> 同一个进行中的 future ⇒ future 完成 ⇔ `controllerManager` 已就绪**。
 
 ### 1.7 影响面与注意事项
 
