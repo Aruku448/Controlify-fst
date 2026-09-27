@@ -1,1 +1,1 @@
-9653411adbb3dc6684c7c3bd5d943d4eae59a832e61bb6f8c299b8a26c927bc1  controlify-2.0.3+1.20.1-forge.jar
+9cf3c91fffe1f08f5cba38e5cb642f545392c0256a7b591c46478f901a248865  controlify-2.0.3+1.20.1-forge.jar
