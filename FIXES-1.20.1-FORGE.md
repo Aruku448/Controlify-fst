@@ -12,7 +12,7 @@
 
 ## 1. 「手柄设置…」按钮点不开，且首次启动不弹 SDL3 询问界面
 
-**状态：已修复；静态验证通过，运行时路径待人工实测（见 1.6）。**
+**状态：已修复，且已完成运行时实测（见 1.5 / 1.6）。**
 **涉及文件：** `src/main/java/dev/isxander/controlify/mixins/core/MinecraftMixin.java`、
 `src/main/java/dev/isxander/controlify/Controlify.java`
 
@@ -105,14 +105,45 @@ java.util.NoSuchElementException: No value present
 | 1.21-neoforge 编译产物 | 反之：只有 `injectCustomInitialScreens` —— 未破坏另一目标 |
 | `Controlify.class` | `finishedInit` 字段消失，改为 `finishInitFuture` |
 
-### 1.6 影响面与注意事项
+### 1.6 运行时实测（本分支已完成）
+
+本机（Linux）发行版自带 SDL3（`/usr/lib/libSDL3.so.0.4.16`），`tryOfflineLoadAndStart()` 总是成功，
+`askNatives()` 在第一道 `if` 就返回，**询问界面分支根本不可达** —— 所以只改 `vibration_onboarded` 没用
+（两种取值都是 `true && true`）。实测时临时把该 `if` 短路掉（`false && ...`，带 `[TEST-ONLY-TEMP]` 标记），
+测试完已还原并重建正式产物。
+
+**实测结果：通过。** 关键判据是配置写回：
+
+```
+测试前  global.vibration_onboarded = false   ← 手工置入，两种写入路径中只有这一条可能被走到
+[22:50:19] Initializing Controlify...
+[22:50:19] Loading Controlify config...
+[22:50:29] Saving Controlify config...                       ← 询问界面回答处理里回写
+[22:50:29] [SDL3NativesManager] Loading SDL3 version: 3.4.16
+[22:50:29] Finishing Controlify init...                     ← future 真的完成了
+[22:50:29] No controllers found.
+[22:50:40] [ControllerManager] Controller connected: '8BitDo Ultimate 3-mode Controller for Xbox'#SDL-1-HID[...]
+测试后  global.vibration_onboarded = true
+```
+
+为什么这能证明修复生效：`vibrationOnboarded = true` 全仓库只有两个写入点 ——
+`Controlify.askNatives()` 的离线短路分支（测试时已被短路掉）与
+`SDLOnboardingScreen` 的回答处理（`SDLOnboardingScreen.java:15`）。
+既然短路分支不可达而配置仍被从 `false` 改成 `true`，只能是**询问界面确实显示并被回答了**。
+修复前该界面会被 `setInitialScreen` 的 TitleScreen 顶掉，future 永挂，
+`Finishing Controlify init...` 不会出现，配置也不会被回写。
+
+同一会话中手柄随后被识别（`8BitDo Ultimate 3-mode Controller for Xbox`），
+说明初始化链路完整跑通；日志无任何 `Controlify` 相关异常。
+
+> 未覆盖：`finishControlifyInit` 的竞态（缺陷 B）——它只在“初始化未完成时点设置按钮”时出现，
+> 而询问界面是模态的，够不到选项菜单；该条仍依靠不变量（重复调用返回同一个进行中的 future）保证。
+
+### 1.7 影响面与注意事项
 
 - 改动全部包在 stonecutter 的 `/*? if <=1.20.1 {*/ … /*?}*/` 中（`doNow` 特例是删除），
   **>1.20.1 的渲染继续走 `addInitialScreens`，行为不变**。
 - 交互顺序变化：1.20.1 上 SDL3 询问界面现在出现在标题界面**之后**（与 1.20.2+ 一致）。
-- **本分支尚未实测运行时路径**：开发机的 SDL3 原生库已下载，`vibrationOnboarded = true`，
-  走的是 `SDL3NativesManager.maybeLoad()` 分支，不会注册询问界面，因此无法在本机复现“全新配置首次启动”。
-  要复测，把实例 `config/controlify.json` 的 `globalSettings.vibrationOnboarded` 改回 `false` 再启动。
 - 教训：`whenComplete` 回调内抛出的异常会进入其返回的 future，若无人观察就完全静默。
   凡是“等初始化完成再继续”的调用方（如 `ControllerCarouselScreen.openConfigScreen`），
   必须保证 future 完成时依赖已就绪 —— 这也是缺陷 B 修成“memoize 真实 future”的原因。
