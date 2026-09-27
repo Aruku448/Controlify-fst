@@ -80,16 +80,9 @@ Controlify-2.0.3-dev\
 ├─ src\main\resources\         # 资源、语言文件、默认手柄键位
 ├─ versions\                   # 各版本/平台的配置；versions\current 指向当前激活目标
 ├─ dist\                       # 已构建好的 Forge 1.20.1 JAR（可直接测试）
-├─ reference\                  # 参考文件（见下）
 ├─ tools\                      # 辅助工具（CPT 震动调参网页、弹药目录等）
 └─ docs\                       # 上游文档
 ```
-
-### reference 目录
-
-- `controlify-instance-preset.json`
-  在一台已跑通的 1.20.1 Forge 实例上验证过的 Controlify 手柄配置快照（已移除手柄 GUID）。
-  可用于对照 CPT 键位、辅助瞄准参数等，**不要直接覆盖**自己的 `config\controlify.json`。
 
 ---
 
@@ -193,7 +186,7 @@ Gradle、Java 编译器与部分 Mixin 工具链对非 ASCII 路径的兼容性�
 
 | 文件 | SHA-256 |
 | --- | --- |
-| `dist\controlify-2.0.3+1.20.1-forge.jar` | 见包内 `dist\SHA256SUMS.txt` |
+| `dist\controlify-2.0.3+1.20.1-forge.jar` | 见 `dist\SHA256SUMS.txt` |
 
 该 JAR 对应源码当前状态；重新构建后哈希会变化，属正常现象。
 
@@ -203,7 +196,6 @@ Gradle、Java 编译器与部分 Mixin 工具链对非 ASCII 路径的兼容性�
 
 - `.gradle\`、`build\`、`versions\*\build\`（构建缓存，体积大且与本机绑定）
 - `run\`、`runserver\`（开发运行时产生的存档与日志）
-- `reference\controlify-instance-preset.json` 含个人按键习惯，外发前可自行删除
 
 ---
 
