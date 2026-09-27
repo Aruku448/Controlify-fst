@@ -15,7 +15,7 @@ if errorlevel 1 (
     echo.
     echo [错误] 未检测到 JDK 21。
     echo        请安装 JDK 21 并设置 JAVA_HOME 后重试。
-    echo        详见 README-WINDOWS.md 第 1 节。
+    echo        详见 README-DEV.md 第 1 节。
     echo.
     pause
     exit /b 1
@@ -33,7 +33,7 @@ set BUILD_RESULT=%errorlevel%
 echo.
 if %BUILD_RESULT% neq 0 (
     echo [失败] 构建未通过，退出码 %BUILD_RESULT%。
-    echo        常见原因见 README-WINDOWS.md 第 5 节。
+    echo        常见原因见 README-DEV.md 第 4 节。
 ) else (
     echo [成功] 产物位于 build\finalJars\
     dir /b "build\finalJars\*.jar" 2>nul

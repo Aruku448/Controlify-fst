@@ -9,7 +9,7 @@
 > - **不接受**通用功能请求、上游同步请求或兼容性 issue
 > - 想要通用的手柄支持，请前往上游 **[Controlify](https://github.com/isXander/Controlify)** 下载官方版本
 >
-> 面向 FST 开发者的环境搭建说明见 **[README-WINDOWS.md](README-WINDOWS.md)**。
+> 面向 FST 开发者的环境搭建与构建说明见 **[README-DEV.md](README-DEV.md)**（Windows / Linux / macOS）。
 
 ---
 

@@ -12,7 +12,7 @@ echo [1/3] 检查 Java 版本...
 java -version 2>&1 | findstr /R /C:"version \"21" >nul
 if errorlevel 1 (
     echo.
-    echo [错误] 未检测到 JDK 21。详见 README-WINDOWS.md 第 1 节。
+    echo [错误] 未检测到 JDK 21。详见 README-DEV.md 第 1 节。
     echo.
     pause
     exit /b 1
