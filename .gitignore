@@ -6,3 +6,4 @@ build
 !.gitkeep
 .kotlin
 .run
+__pycache__/
