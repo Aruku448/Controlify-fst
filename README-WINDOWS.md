@@ -1,9 +1,13 @@
-# Controlify 2.0.3 开发环境（Windows 交接包）
+# Controlify 2.0.3 开发环境（FST 特供 · Windows）
 
 本包是 `Controlify 2.0.3` 的源码开发环境快照，包含 **Minecraft 1.20.1 / Forge 47.4.0** 平台适配、
 Create: Pneumatic Tacticals（CPT）手柄兼容、辅助瞄准等本地改动。
 
-> 本包**只含源码与少量参考文件**，不含 Gradle 缓存 / 构建输出（原始目录约 911 MB，压缩后约 13 MB）。
+> **本分支仅为 FST 提供支持**，不是 Controlify 的通用发行版。
+> 只针对 FST 整合包 / RiaFst 实例（MC 1.20.1 + Forge 47.4.0）适配与测试，
+> 不保证与其它整合包或服务端兼容。需要通用手柄支持请用上游 [Controlify](https://github.com/isXander/Controlify)。
+
+> 本包**只含源码与预构建产物**，不含 Gradle 缓存 / 构建输出（原始目录约 911 MB，压缩后约 7 MB）。
 > 第一次构建会自行下载依赖，请保证网络可用。
 
 ---
@@ -202,4 +206,5 @@ Gradle、Java 编译器与部分 Mixin 工具链对非 ASCII 路径的兼容性�
 ## 8. 上游信息
 
 - 上游项目：Controlify（isXander），LGPL-3.0-or-later
-- 本包基于 2.0.3 版本源码 + 本地 1.20.1 Forge 适配改动
+- 本包基于 2.0.3 版本源码 + 针对 FST（RiaFst，MC 1.20.1 / Forge 47.4.0）的适配改动
+- 本分支仅为 FST 提供支持，不保证其它整合包/服务端可用；通用需求请转上游
