@@ -110,9 +110,25 @@ gradlew.bat chiseledBuildAndCollect
 ```
 
 产物：`build/finalJars/controlify-2.0.3+1.20.1-forge.jar`
-（另有 `-offline.jar`，已内置前置依赖，可直接丢进 `mods` 测试）
 
 需要 **JDK 21**；首次构建需联网。Windows 用户可直接双击 `build-forge-1.20.1.bat`。
+
+### 前置依赖
+
+| | 说明 |
+| --- | --- |
+| **YACL**（`yet_another_config_lib_v3`） | **需要玩家自行安装**，建议 `3.6.6+1.20.1-forge`。已写进 `mods.toml`，缺失时 Forge 会弹缺前置界面 |
+| MixinExtras 0.5.0-beta.4 | 已内置（JiJ），无需安装 |
+| SDL3 原生库 | 不算 mod 前置；Controlify 首启自行下载，或用系统库 |
+
+两个 jar 变体的区别只是**是否内置 SDL3 原生库**，**都不包含 YACL**：
+
+| 文件 | 大小 | 区别 |
+| --- | --- | --- |
+| `controlify-2.0.3+1.20.1-forge.jar` | 4.2 MB | 标准版 |
+| `controlify-2.0.3+1.20.1-forge-offline.jar` | 14 MB | 额外内置各平台 SDL3 原生库（免联网下载） |
+
+如果要让玩家彻底不用管前置，可以把 YACL 也 JiJ 进来（`build.gradle.kts` 里给它加 `.jij()`）。
 
 ---
 

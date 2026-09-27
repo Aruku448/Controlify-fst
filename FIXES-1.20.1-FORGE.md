@@ -221,7 +221,126 @@ net.neoforged.moddevgradle.legacyforge.dsl.ObfuscationExtension  // configureSrg
 
 ---
 
-## 3. 复现 / 验证命令速查
+## 3. 缺前置（YACL）时不弹缺前置界面、直接崩溃
+
+**状态：已修复。**
+**涉及文件：** `src/main/templates/META-INF/mods.toml`、`src/main/templates/META-INF/neoforge.mods.toml`
+**影响目标：** 1.20.1-forge（主目标）；1.21-neoforge 同一模板写法，同样受影响
+
+### 3.1 现象
+
+只把 `controlify-2.0.3+1.20.1-forge.jar` 放进 `mods/`（**未装** YACL）时：
+
+- **不会**出现 Forge 的 `Missing or unsupported mandatory dependencies` 界面；
+- 游戏直接崩溃，crash-report：
+
+```
+java.lang.NoClassDefFoundError: Could not initialize class dev.isxander.controlify.config.GlobalSettings
+        at dev.isxander.controlify.config.ControlifyConfig.<init>(ControlifyConfig.java:45)
+        at dev.isxander.controlify.Controlify.<init>(Controlify.java:90)
+        at net.minecraftforge.fml.javafmlmod.FMLModContainer.constructMod(FMLModContainer.java:77)
+
+Caused by: java.lang.ExceptionInInitializerError:
+   Exception java.lang.NoClassDefFoundError: dev/isxander/yacl3/api/NameableEnum
+```
+
+即本应由 Forge 在 mod 加载前拦下的“缺前置”，变成了加载期的 `NoClassDefFoundError`。
+
+### 3.2 根因
+
+**依赖表的表头带了引号**，导致两个依赖声明在 TOML 层面根本没构成依赖表：
+
+```toml
+[["dependencies.${mod_id}"]]      # ← 问题所在
+```
+
+按 TOML 规范，带引号的 `"dependencies.controlify"` 是**键名里含点号的单个键**，并不等于
+`dependencies` → `controlify` 的嵌套表。本分支用 `tomllib` 解析构建产物直接看到：
+
+```
+top-level keys          : ['dependencies.controlify', 'license', 'loaderVersion', 'mixins', 'modLoader', 'mods']
+有嵌套 dependencies 表 : False      ← Forge 就是查这个表
+有扁平的点号键         : True
+```
+
+Forge 读依赖的方式是查 `dependencies` 表 → 查不到 → **`minecraft` 与 `yet_another_config_lib_v3`
+两个依赖全部失效**。决定性日志（修复前）：
+
+```
+[ModSorter/LOADING]: Found 0 mod requirements missing (0 mandatory, 0 optional)
+...
+Mod List:
+    main | Controlify | controlify | 2.0.3+1.20.1-forge | ERROR | Manifest: NOSIGNATURE
+```
+
+依赖不生效 ⇒ 缺 YACL 时 Forge 认为“没有依赖缺失” ⇒ 照常构造 mod ⇒
+构造期初始化 `GlobalSettings`（字段 `ReachAroundMode` 引用了 `dev.isxander.yacl3.api.NameableEnum`）
+⇒ `NoClassDefFoundError` 崩溃。
+
+> **来源**：该写法继承自上游 *isXander/Controlify 2.0.3* 的模板。上游主要面向 Fabric
+> （依赖写进 `fabric.mod.json`，由 Fabric Loader 强制），这份 Forge 模板显然没有被真正验证过；
+> 本分支是 Forge 1.20.1 专用，于是暴露出来。同类问题也适用于任何直接复用该模板的 Forge/NeoForge 移植。
+
+### 3.3 修复
+
+模板本身**不参与 TOML 解析**（`${mod_id}` 由构建期字符串替换），因此去掉引号、写成裸键即可：
+
+```diff
+- [["dependencies.${mod_id}"]]
++ [[dependencies.${mod_id}]]
+```
+
+同时给 YACL 依赖补上显式版本范围（原先缺 `versionRange`，Forge 报错里的 *Expected range* 是空串）：
+
+```diff
+  [[dependencies.${mod_id}]]
+  modId = "yet_another_config_lib_v3"
+  mandatory = true
++ versionRange = "[0,)"
+  ordering = "NONE"
+  side = "BOTH"
+```
+
+`neoforge.mods.toml` 做同样处理，并按 NeoForge 规范把 `mandatory = true` 换成 `type = "required"`
+（NeoForge 用 `type`，取值 `required` / `optional` / `incompatible` / `discouraged`；
+`type` 缺省值本来就是 `required`，所以即使解析器忽略它也不会变错）。
+两份模板里都加了注释说明为什么表头不能带引号。
+
+### 3.4 验证
+
+本分支复检四个构建产物（`tomllib` 解析 `build/finalJars/*.jar`）：
+
+```
+controlify-2.0.3+1.20.1-forge.jar          嵌套 dependencies=有  扁平点号键=无
+   ('minecraft', '[1.20.1,1.20.2)', True)
+   ('yet_another_config_lib_v3', '[0,)', True)
+controlify-2.0.3+1.20.1-forge-offline.jar  同上
+controlify-2.0.3+1.21-neoforge.jar         嵌套 dependencies=有  扁平点号键=无
+   ('minecraft', '[1.21,1.21.1]', 'required')
+   ('yet_another_config_lib_v3', '[0,)', 'required')
+controlify-2.0.3+1.21-neoforge-offline.jar 同上
+```
+
+原作者在 dev 运行时以「缺 YACL」「有 YACL」两种场景实测：
+
+| 场景 | 关键日志 | 结果 |
+| --- | --- | --- |
+| 修复前 + 缺 YACL | `Found 0 mod requirements missing (0 mandatory, 0 optional)` | 继续构造 mod → `NoClassDefFoundError`，产生 crash-report ❌ |
+| 修复后 + 缺 YACL | `Found 1 mod requirements missing (1 mandatory, 0 optional)`<br>`Mod ID: 'yet_another_config_lib_v3', Expected range: '[0,)'` | 正常进入 Forge 缺前置报错流程，**不再崩溃** ✅ |
+| 修复后 + 有 YACL | `Found 0 mod requirements missing` → `Finishing Controlify init...` | 正常启动，`[0,)` 不会误判已安装的前置 ✅ |
+
+### 3.5 影响面
+
+- 只改 mod 元数据，**不改任何代码路径**，对已装齐前置的玩家无行为变化。
+- 之前“依赖声明失效”是**静默**的：`minecraft` 的版本范围校验同样没生效。修复后也会真正生效
+  （range 由模板的 `${mc}` 提供，本分支 Forge 为 `[1.20.1,1.20.2)`）。
+- 版本范围取 `[0,)`：只强制“存在”，不做 YACL 版本比对。若要卡最低版本，
+  把它换成例如 `[3.6.6,)` 即可（注意 Maven 版本比较对 `3.6.6+1.20.1-forge`
+  这类带构建元数据的版本串的处理）。
+
+---
+
+## 4. 复现 / 验证命令速查
 
 ```bash
 # 只构建 forge 目标（CI_SINGLE_BUILD 让 Stonecutter 只注册该版本）
@@ -244,8 +363,30 @@ javap -p /tmp/y.class | grep -E 'm_5540_|reload\('     # 应为 reload(
 
 ---
 
-## 4. 上游信息
+## 5. 上游信息
+
+### 5.1 给上游的说明（English）
+
+> **Forge/NeoForge metadata bug: dependency table header is quoted**
+>
+> `src/main/templates/META-INF/mods.toml` declares `[["dependencies.${mod_id}"]]`. In TOML a quoted key
+> is a *single key containing dots*, so the file ends up with a flat top-level key
+> `dependencies.controlify` instead of a nested `dependencies` → `controlify` table. Forge reads
+> dependencies from the `dependencies` table, so **no dependency is registered at all**
+> (`Found 0 mod requirements missing` in the log). Consequence: with `yet_another_config_lib_v3`
+> absent the game skips the "Missing or unsupported mandatory dependencies" screen, constructs the mod,
+> and dies with `NoClassDefFoundError: dev/isxander/yacl3/api/NameableEnum`. The same applies to
+> `neoforge.mods.toml` (where `mandatory` should also be `type = "required"`).
+>
+> Fix: use an unquoted table header — `[[dependencies.${mod_id}]]` — and give the dependency an explicit
+> `versionRange` (e.g. `"[0,)"`); otherwise Forge reports an empty *Expected range*.
+> Verified on Forge 1.20.1 (47.4.0): before the fix the log says
+> `Found 0 mod requirements missing` and the game crashes; after the fix it says
+> `Found 1 mod requirements missing (1 mandatory, 0 optional)` and Forge shows its missing-dependency
+> error screen instead.
+
+### 5.2 本分支
 
 - 上游项目：Controlify（isXander），LGPL-3.0-or-later
-- 这两个修复是本分支为 1.20.1 Forge 支持的本地改动，未回馈上游
+- 本文件的修复均为本分支为 1.20.1 Forge 支持的本地改动，未回馈上游
 - 本分支仅为 FST 提供支持，不保证其它整合包/服务端可用；通用需求请转上游

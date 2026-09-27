@@ -13,15 +13,22 @@ ${mod_description}
 '''
 logoFile = "icon.png"
 
-[["dependencies.${mod_id}"]]
+# NOTE: the table header must NOT be quoted. Writing [["dependencies.${mod_id}"]] makes TOML
+# parse "dependencies.controlify" as a single flat key instead of a nested table, so NeoForge
+# finds no dependency table at all and skips the missing-dependency check entirely.
+# NeoForge expresses dependency kind with `type` (required/optional/incompatible/discouraged);
+# `required` is also the default, so a parser that ignores `type` still behaves correctly.
+[[dependencies.${mod_id}]]
 modId = "minecraft"
-mandatory = true
+type = "required"
 versionRange = "${mc}"
 ordering = "NONE"
 side = "BOTH"
 
-[["dependencies.${mod_id}"]]
+[[dependencies.${mod_id}]]
 modId = "yet_another_config_lib_v3"
-mandatory = true
+type = "required"
+# only require presence, not a specific YACL version
+versionRange = "[0,)"
 ordering = "NONE"
 side = "BOTH"
