@@ -7,7 +7,9 @@ Create: Pneumatic Tacticals（CPT）手柄兼容、辅助瞄准等本地改动�
 > 只针对 FST 整合包 / RiaFst 实例（MC 1.20.1 + Forge 47.4.0）适配与测试，
 > 不保证与其它整合包或服务端兼容。需要通用手柄支持请用上游 [Controlify](https://github.com/isXander/Controlify)。
 
-> 具体改了哪些内容见 **[README.md](README.md)**；本文档只讲环境与构建。
+> 具体改了哪些内容见 **[README.md](README.md)**；1.20.1 Forge 上踩过的坑（初始界面被覆盖、
+> dev client 因 YACL 重混淆崩溃）及修法见 **[FIXES-1.20.1-FORGE.md](FIXES-1.20.1-FORGE.md)**；
+> 本文档只讲环境与构建。
 
 ---
 

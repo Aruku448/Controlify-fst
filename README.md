@@ -10,6 +10,7 @@
 > - 想要通用的手柄支持，请前往上游 **[Controlify](https://github.com/isXander/Controlify)** 下载官方版本
 >
 > 面向 FST 开发者的环境搭建与构建说明见 **[README-DEV.md](README-DEV.md)**（Windows / Linux / macOS）。
+> 1.20.1 Forge 上踩过的坑及其根因、修法与验证方式见 **[FIXES-1.20.1-FORGE.md](FIXES-1.20.1-FORGE.md)**。
 
 ---
 
