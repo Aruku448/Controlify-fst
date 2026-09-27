@@ -218,9 +218,9 @@ public class InputComponent implements ECSComponent, ConfigHolder<InputComponent
         public float virtualMouseSensitivity = 1f;
         public boolean reduceAimingSensitivity = true;
         public boolean aimAssistEnabled = true;
-        public float aimAssistStrength = 0.6f;
-        public float aimAssistFov = 30f;
-        public float aimAssistRange = 128f;
+        public float aimAssistStrength = 0.45f;
+        public float aimAssistFov = 15f;
+        public float aimAssistRange = 48f;
 
         public float buttonActivationThreshold = 0.5f;
 
