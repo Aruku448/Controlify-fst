@@ -6,6 +6,7 @@ import dev.isxander.controlify.bindings.input.Input;
 import dev.isxander.controlify.bindings.output.*;
 import dev.isxander.controlify.controller.ControllerEntity;
 import dev.isxander.controlify.controller.input.ControllerStateView;
+import dev.isxander.controlify.compatibility.cpt.CptKeyBindings;
 import dev.isxander.controlify.compatibility.cpt.CptReflection;
 import dev.isxander.controlify.utils.ResizableRingBuffer;
 import net.minecraft.client.Minecraft;
@@ -173,12 +174,30 @@ public class InputBindingImpl implements InputBinding {
         return controller.input()
                 .map(input -> input.getAllBindings().stream()
                         .filter(other -> other != this)
-                        .filter(other -> !other.boundInput().equals(other.defaultInput()))
                         .filter(other -> other.boundInput().equals(this.boundInput))
+                        .filter(InputBindingImpl::takesPriorityOverDefaults)
                         .anyMatch(other -> (other.contexts().isEmpty()
                                 || other.contexts().stream().anyMatch(thisTickContexts::contains))
                                 && isCptGunEquipped()))
                 .orElse(false);
+    }
+
+    /**
+     * Whether {@code other} outranks a conflicting Controlify default binding.
+     *
+     * <p>Two cases qualify:
+     * <ul>
+     *     <li>the player rebound it by hand, or</li>
+     *     <li>it is one of the CPT binds Controlify ships a preset for. Those are equal to their
+     *         defaults, so the manual check alone would miss them and the CPT key would fire
+     *         alongside the Controlify default that shares its input.</li>
+     * </ul>
+     */
+    private static boolean takesPriorityOverDefaults(InputBinding other) {
+        if (!other.boundInput().equals(other.defaultInput())) {
+            return true;
+        }
+        return CptKeyBindings.isCptBinding(other);
     }
 
     private boolean isCptGunEquipped() {

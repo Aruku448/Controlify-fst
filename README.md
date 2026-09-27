@@ -59,7 +59,7 @@
 | 持枪检测 | 仅在主手持有 CPT `GeoGunItem` 时启用枪械逻辑 |
 | 右摇杆选弹 | 兼容 CPT 原生按键处理，只扩展手柄输入 |
 | 震动 | 按弹药伤害缩放的马达震动（含左右扳机马达）；配置 `config/controlify/cpt-rumble.json`，调参工具 `tools/cpt-rumble-tuner.html` |
-| 按键优先级 | 持枪时**手动改绑的 CPT 按键优先于冲突的 Controlify 默认绑定**；未持枪时保留原版按键行为（`bindings/InputBindingImpl.java`） |
+| 按键优先级 | 持枪时 **CPT 按键优先于冲突的 Controlify 默认绑定**（不论该 CPT 键是内置预设还是玩家手动改绑）；未持枪时保留原版按键行为（`bindings/InputBindingImpl.java` + `compatibility/cpt/CptKeyBindings.java`） |
 
 ### 3. CPT 默认手柄键位（已内置）
 
@@ -72,6 +72,10 @@
 | 切换弹药 `cycle_ammo` | `dpad_up` |
 
 安装后即获得相同默认键位；玩家已有的手动改绑不会被覆盖。
+
+这三组预设会与 Controlify 自己的默认键位撞车：`reload`↔`swap_hands`、
+`cycle_ammo`↔`open_chat`、`fire_mode`↔`radial_menu`。持枪时 CPT 按键优先，冲突的默认绑定会被压制；
+不持枪时一切照旧。改动这段优先级逻辑后，可用 `tools/cpt-binding-conflicts.py` 对一份实例配置做检查。
 
 ### 4. 辅助瞄准（Aim Assist）
 
