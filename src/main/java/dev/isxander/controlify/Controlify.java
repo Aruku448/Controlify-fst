@@ -67,7 +67,12 @@ public class Controlify implements ControlifyApi {
 
     private ControllerManager controllerManager;
 
-    private boolean finishedInit = false;
+    /**
+     * Memoised future of {@link #finishControlifyInit()}. Kept as a future rather than a plain
+     * boolean so that repeated calls hand back the *same in-flight* result: callers can then rely
+     * on the invariant <em>future completed &rArr; {@link #controllerManager} is set</em>.
+     */
+    @Nullable private CompletableFuture<Void> finishInitFuture = null;
     private boolean initializationStarted = false;
     private boolean probeMode = false;
 
@@ -335,13 +340,12 @@ public class Controlify implements ControlifyApi {
      * @return the future that completes when controlify has finished initializing
      */
     public CompletableFuture<Void> finishControlifyInit() {
-        if (finishedInit) {
-            return CompletableFuture.completedFuture(null);
+        if (finishInitFuture != null) {
+            return finishInitFuture;
         }
         probeMode = false;
-        finishedInit = true;
 
-        return askNatives().whenComplete((loaded, th) -> UnhandledCompletableFutures.run(() -> {
+        return finishInitFuture = askNatives().whenComplete((loaded, th) -> UnhandledCompletableFutures.run(() -> {
             CUtil.LOGGER.log("Finishing Controlify init...");
 
             if (!loaded) {

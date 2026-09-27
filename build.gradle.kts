@@ -243,11 +243,57 @@ dependencies {
         modDependency("modMenu", { "com.terraformersmc:modmenu:$it" })
     }
 
-    modstitchModApi("dev.isxander:yet-another-config-lib:${property("deps.yacl")}") {
-        // was including old fapi version that broke things at runtime
-        exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")
-        exclude(group = "thedarkcolour")
-    }.productionMod()
+    if (isForge) {
+        // Legacy Forge publishes mod jars reobfuscated to SRG member names, while the dev client runs
+        // on named (Mojang) mappings. Compiling against the SRG jar is fine - class names stay
+        // readable, only member names differ - but leaving it on the *runtime* classpath makes YACL's
+        // PreparableReloadListener override `m_5540_` instead of `reload`, so the first resource
+        // reload dies with AbstractMethodError (YACLImageReloadListener).
+        //
+        // MDG only provides named -> SRG (reobfuscate); there is no SRG -> named for dependencies,
+        // so compile against it and hand the dev runtime a remapped copy of the jar instead.
+        // Published artefacts are unaffected: YACL is not bundled and mods.toml already requires it.
+        val yaclVersion = property("deps.yacl").toString()
+        val yacl = "dev.isxander:yet-another-config-lib:$yaclVersion"
+
+        modstitchModCompileOnly(yacl) {
+            exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")
+            exclude(group = "thedarkcolour")
+        }
+
+        // the pristine SRG jar, deliberately kept off every other classpath
+        val yaclSrg by configurations.creating {
+            isTransitive = false
+            isCanBeConsumed = false
+            isCanBeResolved = true
+        }
+        dependencies.add(yaclSrg.name, yacl)
+
+        val remapYaclToNamed by tasks.registering(net.neoforged.moddevgradle.legacyforge.tasks.RemapJar::class) {
+            group = "controlify"
+            description = "Remaps YACL from SRG to named mappings for the Forge dev client."
+
+            input.fileProvider(project.provider { yaclSrg.singleFile })
+            libraries.from(project.sourceSets.main.get().compileClasspath)
+            destinationDirectory.set(project.layout.buildDirectory.dir("devRemappedMods"))
+            // name it after YACL, not after this project - it is a remapped copy of YACL
+            archiveBaseName.set("yet-another-config-lib")
+            archiveVersion.set(yaclVersion)
+            archiveClassifier.set("named")
+
+            project.extensions
+                .getByType(net.neoforged.moddevgradle.legacyforge.dsl.ObfuscationExtension::class.java)
+                .configureSrgToNamedOperation(remapOperation)
+        }
+
+        runtimeOnly(files(remapYaclToNamed))
+    } else {
+        modstitchModApi("dev.isxander:yet-another-config-lib:${property("deps.yacl")}") {
+            // was including old fapi version that broke things at runtime
+            exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")
+            exclude(group = "thedarkcolour")
+        }.productionMod()
+    }
 
     // bindings for SDL3
     modstitchApi("dev.isxander:libsdl4j:${property("deps.sdl3Target")}-${property("deps.sdl34jBuild")}")

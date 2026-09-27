@@ -142,7 +142,31 @@ public abstract class MinecraftMixin implements InitialScreenRegistryDuck {
         output.addAll(initialScreenCallbacks);
         initialScreensHappened = true;
     }
-    /*?}*/
+    /*?} else {*/
+    /*// 1.20.1 and below have no addInitialScreens: vanilla sets its initial screen
+    // (TitleScreen / AccessibilityOnboardingScreen / quick-play) from setInitialScreen,
+    // which runs *after* onGameLoadFinished. Anything we show earlier is replaced by it,
+    // so wait for vanilla to set its screen and then stack ours on top.
+    @Inject(method = "setInitialScreen", at = @At("RETURN"))
+    private void controlify$showInitialScreens(CallbackInfo ci) {
+        if (initialScreensHappened) {
+            return;
+        }
+        initialScreensHappened = true;
+        controlify$showNextInitialScreen(this.screen);
+    }
+
+    @Unique
+    private void controlify$showNextInitialScreen(Screen returnTo) {
+        if (initialScreenCallbacks.isEmpty()) {
+            setScreen(returnTo);
+            return;
+        }
+
+        Function<Runnable, Screen> screenFactory = initialScreenCallbacks.remove(0);
+        setScreen(screenFactory.apply(() -> controlify$showNextInitialScreen(returnTo)));
+    }
+    *//*?}*/
 
     @Unique
     private float getTickDelta() {
@@ -155,12 +179,7 @@ public abstract class MinecraftMixin implements InitialScreenRegistryDuck {
 
     @Override
     public void controlify$registerInitialScreen(Function<Runnable, Screen> screenFactory) {
-        boolean doNow = initialScreensHappened;
-        /*? if <=1.20.1 {*/
-        /*doNow = true;
-        *//*?}*/
-
-        if (doNow) {
+        if (initialScreensHappened) {
             Screen lastScreen = this.screen;
             setScreen(screenFactory.apply(() -> setScreen(lastScreen)));
         } else {
