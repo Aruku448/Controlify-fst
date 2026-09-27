@@ -167,7 +167,12 @@ set CI_SINGLE_BUILD=1.20.1-forge
 .\gradlew.bat chiseledBuildAndCollect
 ```
 
-其他可用目标见 `versions\` 目录名（如 `1.20.1-fabric`、`1.21.5-neoforge` 等）。
+其他可用目标见 `versions\` 目录名。本分支只保留两个构建目标：
+
+| 目标 | Minecraft | 平台 |
+| --- | --- | --- |
+| `1.20.1-forge` | 1.20.1 | Forge（FST 现行，默认） |
+| `1.21-neoforge` | 1.21.1 | NeoForge |
 
 ### 5.4 `versions\current` 是什么
 
